@@ -1,19 +1,20 @@
 function ask() {
   // return prompt('When is your birthday ?');
   // return '19780927';
-  return '21000701';
+  return '2100/07/01';
 }
 
 /**
  *
  * @param birthday
- * @throws {InvalidDateFormatError} ユーザーが誕生日を間違って入力した
- * @throws {DateIsInTheFutureError} ユーザーが未来の誕生日を入力した
  */
-function parse(birthday: string): Date {
+function parse(birthday: string): Date | Error {
   let date = new Date(birthday);
   if (!isValid(date)) {
-    throw new RangeError('Enter a date in the form YYYY/MM/DD');
+    return new Error('Enter a date in the form YYYY/MM/DD');
+  }
+  if (date.getTime() > Date.now()) {
+    return new Error('Are you a timeload?');
   }
   return date;
 }
@@ -25,9 +26,9 @@ function isValid(date: Date) {
   );
 }
 
-try {
-  let date = parse(ask());
-  console.info('Date is', date.toISOString());
-} catch (e) {
-  console.error(e.message);
+let result = parse(ask());
+if (result instanceof Error) {
+  console.error(result.message);
+} else {
+  console.info('Date is', result.toISOString());
 }
